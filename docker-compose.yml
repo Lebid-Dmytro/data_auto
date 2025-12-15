@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16
+    container_name: auto_ria_db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-auto_ria}
+      POSTGRES_USER: ${POSTGRES_USER:-auto_ria_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-auto_ria_password}
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: auto_ria_app
+    depends_on:
+      - db
+    volumes:
+      - ./dumps:/app/dumps
+    command: ["python", "-m", "auto_ria_scraper.main"]
+
+volumes:
+  db_data:
+
+
